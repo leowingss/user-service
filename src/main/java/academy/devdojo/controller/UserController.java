@@ -1,6 +1,8 @@
 package academy.devdojo.controller;
 
+import academy.devdojo.mapper.UserMapper;
 import academy.devdojo.response.UserGetResponse;
+import academy.devdojo.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +19,10 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class UserController {
+
+    private final UserService service;
+    private final UserMapper mapper;
+
     @GetMapping
     public ResponseEntity<List<UserGetResponse>> findAll(@RequestParam(required = false) String firstName){
         log.debug("Request received to a list all users, param first name '{}'", firstName);
