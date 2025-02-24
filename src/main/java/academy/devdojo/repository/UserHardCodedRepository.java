@@ -24,7 +24,7 @@ public class UserHardCodedRepository {
                 .findFirst();
     }
 
-    public List<User> findByName(String firstName) {
+    public List<User> findByFirstName(String firstName) {
         return userData.getUsers()
                 .stream()
                 .filter(user -> user.getFirstName().equalsIgnoreCase(firstName))
