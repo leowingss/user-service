@@ -18,13 +18,17 @@ public class UserHardCodedRepository {
     }
 
     public Optional<User> findById(Long id) {
-        return userData.getUsers().stream()
+        return userData.getUsers()
+                .stream()
                 .filter(user -> user.getId().equals(id))
                 .findFirst();
     }
 
     public List<User> findByName(String firstName) {
-        return userData.getUsers().stream().filter(user -> user.getFirstName().equalsIgnoreCase(firstName)).toList();
+        return userData.getUsers()
+                .stream()
+                .filter(user -> user.getFirstName().equalsIgnoreCase(firstName))
+                .toList();
     }
 
 
