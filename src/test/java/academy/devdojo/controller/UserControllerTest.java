@@ -81,4 +81,30 @@ class UserControllerTest {
                 .andExpect(MockMvcResultMatchers.content().json(response));
     }
 
+    @Test
+    @DisplayName("GET v1/users/1 returns a user with given id")
+    @Order(4)
+    void findById_ReturnsUserById_WhenSuccessfull() throws Exception {
+        BDDMockito.when(userData.getUsers()).thenReturn(usersList);
+        var response = fileUtils.readResourceFile("user/get-user-by-id-200.json");
+        var id = 1L;
+        mockMvc.perform(MockMvcRequestBuilders.get(URL + "/{id}", id))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().json(response));
+    }
+
+    @Test
+    @DisplayName(" GET v1/users/99 throws ResponseStatusException 404 when user is notFound")
+    @Order(5)
+    void findById_ThrowsResponseStatusException_WhenProducerIsNotFound() throws Exception {
+        BDDMockito.when(userData.getUsers()).thenReturn(usersList);
+        var id = 99L;
+        mockMvc.perform(MockMvcRequestBuilders.get(URL + "/{id}", id))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+
+    }
+
+
 }

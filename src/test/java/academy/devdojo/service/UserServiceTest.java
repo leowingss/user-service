@@ -10,9 +10,11 @@ import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -61,6 +63,30 @@ import java.util.List;
         BDDMockito.when(repository.findByFirstName(firstName)).thenReturn(Collections.emptyList());
         var users = service.findAll(firstName);
         Assertions.assertThat(users).isNotNull().isEmpty();
+    }
+
+    @Test
+    @DisplayName("findById returns a user with given id")
+    @Order(4)
+    void findById_ReturnsUserById_WhenSuccessfull() {
+        var expectedUser = usersList.getFirst();
+        BDDMockito.when(repository.findById(expectedUser.getId())).thenReturn(Optional.of(expectedUser));
+
+        var users = service.findByIdOrThrowNotFound(expectedUser.getId());
+        Assertions.assertThat(users).isEqualTo(expectedUser);
+    }
+
+    @Test
+    @DisplayName("findById throws ResponseStatusException when user is notFound")
+    @Order(5)
+    void findById_ThrowsResponseStatusException_WhenUserIsNotFound() {
+        var expectedUser = usersList.getFirst();
+        BDDMockito.when(repository.findById(expectedUser.getId())).thenReturn(Optional.empty());
+
+        Assertions.assertThatException()
+                .isThrownBy(() -> service.findByIdOrThrowNotFound(expectedUser.getId()))
+                .isInstanceOf(ResponseStatusException.class);
+
     }
 
 }
