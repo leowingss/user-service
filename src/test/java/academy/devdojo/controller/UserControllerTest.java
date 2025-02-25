@@ -99,7 +99,7 @@ class UserControllerTest {
     @Test
     @DisplayName(" GET v1/users/99 throws ResponseStatusException 404 when user is notFound")
     @Order(5)
-    void findById_ThrowsResponseStatusException_WhenProducerIsNotFound() throws Exception {
+    void findById_ThrowsResponseStatusException_WhenUserIsNotFound() throws Exception {
         BDDMockito.when(userData.getUsers()).thenReturn(usersList);
         var id = 99L;
         mockMvc.perform(MockMvcRequestBuilders.get(URL + "/{id}", id))
@@ -128,6 +128,37 @@ class UserControllerTest {
                 .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andExpect(MockMvcResultMatchers.content().json(response));
+    }
+
+    @Test
+    @DisplayName("DELETE v1/users/1 removes an user")
+    @Order(7)
+    void delete_RemoveUser_WhenSuccesfull() throws Exception {
+        BDDMockito.when(userData.getUsers()).thenReturn(usersList);
+
+        var id = usersList.getFirst().getId();
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .delete(URL + "/{id}", id)
+                )
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
+    }
+
+    @Test
+    @DisplayName("DELETE v1/users/99 throws ResponseStatusException when user is notFound")
+    @Order(8)
+    void delete_ThrowsReponseStatusException_WhenUserIsNotFound() throws Exception {
+        BDDMockito.when(userData.getUsers()).thenReturn(usersList);
+
+        var id = 99;
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .delete(URL + "/{id}", id)
+                )
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+
     }
 
 
