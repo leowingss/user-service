@@ -101,4 +101,32 @@ import java.util.Optional;
         Assertions.assertThat(savedUser).isEqualTo(userToSaved).hasNoNullFieldsOrProperties();
     }
 
+    @Test
+    @DisplayName("delete removes an user")
+    @Order(7)
+    void delete_RemoveUser_WhenSuccesfull() {
+
+        var userToDelete = usersList.getFirst();
+        BDDMockito.when(repository.findById(userToDelete.getId())).thenReturn(Optional.of(userToDelete));
+        BDDMockito.doNothing().when(repository).delete(userToDelete);
+
+        Assertions.assertThatNoException().isThrownBy(() -> service.delete(userToDelete.getId()));
+
+    }
+
+    @Test
+    @DisplayName("delete throws ResponseStatusException when user is notFound")
+    @Order(8)
+    void delete_ThrowsReponseStatusException_WhenUserIsNotFound() {
+
+        var userToDelete = usersList.getFirst();
+        BDDMockito.when(repository.findById(userToDelete.getId())).thenReturn(Optional.empty());
+
+        Assertions.assertThatException()
+                .isThrownBy(() -> service.delete(userToDelete.getId()))
+                .isInstanceOf(ResponseStatusException.class);
+
+    }
+
+
 }

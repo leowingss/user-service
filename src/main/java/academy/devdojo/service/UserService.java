@@ -28,5 +28,11 @@ public class UserService {
         return repository.save(user);
     }
 
+    public void delete(Long id) {
+        var user = findByIdOrThrowNotFound(id);
+        repository.delete(user);
+    }
+
+
 
 }
