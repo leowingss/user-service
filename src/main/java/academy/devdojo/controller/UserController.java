@@ -1,10 +1,14 @@
 package academy.devdojo.controller;
 
 import academy.devdojo.mapper.UserMapper;
+import academy.devdojo.request.UserPostRequest;
 import academy.devdojo.response.UserGetResponse;
+import academy.devdojo.response.UserPostResponse;
 import academy.devdojo.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +24,7 @@ public class UserController {
     private final UserMapper mapper;
 
     @GetMapping
-    public ResponseEntity<List<UserGetResponse>> findAll(@RequestParam(required = false) String firstName){
+    public ResponseEntity<List<UserGetResponse>> findAll(@RequestParam(required = false) String firstName) {
         log.debug("Request received to a list all users, param first name '{}'", firstName);
 
         var users = service.findAll(firstName);
@@ -41,4 +45,19 @@ public class UserController {
         return ResponseEntity.ok(userGetResponse);
 
     }
+
+    @PostMapping()
+    public ResponseEntity<UserPostResponse> save(@RequestBody UserPostRequest userPostRequest) {
+
+        log.debug("Request to save user: {}", userPostRequest);
+
+        var user = mapper.toUser(userPostRequest);
+        var userSaved = service.save(user);
+        var userPostResponse = mapper.toUserPostResponse(userSaved);
+
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(userPostResponse);
+
+    }
+
 }
