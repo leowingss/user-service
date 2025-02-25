@@ -33,6 +33,11 @@ public class UserService {
         repository.delete(user);
     }
 
+    public void update(User userToUpdate) {
+        var producer = findByIdOrThrowNotFound(userToUpdate.getId());
+        repository.update(userToUpdate);
+    }
+
 
 
 }

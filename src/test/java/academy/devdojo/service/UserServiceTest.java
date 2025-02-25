@@ -6,6 +6,7 @@ import academy.devdojo.repository.UserHardCodedRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -127,6 +128,42 @@ import java.util.Optional;
                 .isInstanceOf(ResponseStatusException.class);
 
     }
+
+    @Test
+    @DisplayName("update updates an user")
+    @Order(9)
+    void update_UpdatesUser_WhenSuccessfull() {
+
+        var userToUpdate = usersList.getFirst();
+        userToUpdate.setFirstName("Thiago");
+
+        BDDMockito.when(repository.findById(userToUpdate.getId())).thenReturn(Optional.of(userToUpdate));
+        BDDMockito.doNothing().when(repository).update(userToUpdate);
+
+        service.update(userToUpdate);
+
+
+        Assertions.assertThatNoException().isThrownBy(() -> service.update(userToUpdate));
+
+    }
+
+    @Test
+    @DisplayName("update throws ResponseStatusException when user is notFound")
+    @Order(10)
+    void update_ThrowsResponseStatusException_WhenUserIsNotFound() {
+
+        var userToUpdate = usersList.getFirst();
+        userToUpdate.setFirstName("Thiago");
+
+        BDDMockito.when(repository.findById(ArgumentMatchers.anyLong())).thenReturn(Optional.empty());
+
+
+        Assertions.assertThatException()
+                .isThrownBy(() -> service.update(userToUpdate))
+                .isInstanceOf(ResponseStatusException.class);
+    }
+
+
 
 
 }
