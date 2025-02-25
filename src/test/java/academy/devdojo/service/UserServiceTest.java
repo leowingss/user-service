@@ -31,7 +31,6 @@ import java.util.Optional;
 
     @BeforeEach
     void init() {
-
         usersList = userUtils.newUserList();
     }
 
@@ -87,6 +86,19 @@ import java.util.Optional;
                 .isThrownBy(() -> service.findByIdOrThrowNotFound(expectedUser.getId()))
                 .isInstanceOf(ResponseStatusException.class);
 
+    }
+
+    @Test
+    @DisplayName("save creates an user")
+    @Order(6)
+    void save_CreatesUser_WhenSuccessfull() {
+        var userToSaved = userUtils.newUserToSave();
+
+        BDDMockito.when(repository.save(userToSaved)).thenReturn(userToSaved);
+
+        var savedUser = service.save(userToSaved);
+
+        Assertions.assertThat(savedUser).isEqualTo(userToSaved).hasNoNullFieldsOrProperties();
     }
 
 }

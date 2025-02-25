@@ -24,5 +24,9 @@ public class UserService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
     }
 
+    public User save(User user) {
+        return repository.save(user);
+    }
+
 
 }
