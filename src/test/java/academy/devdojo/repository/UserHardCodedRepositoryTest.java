@@ -5,12 +5,15 @@ import academy.devdojo.domain.User;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -97,6 +100,27 @@ class UserHardCodedRepositoryTest {
         Assertions.assertThat(users).isNotEmpty().doesNotContain(userToDelete);
 
     }
+
+    @Test
+    @DisplayName("update updates a user")
+    @Order(7)
+    void update_UpdatesUser_WhenSuccessfull() {
+        BDDMockito.when(userData.getUsers()).thenReturn(userList);
+
+        var userToUpdate = this.userList.getFirst();
+        userToUpdate.setFirstName("Thiago");
+        repository.update(userToUpdate);
+        Assertions.assertThat(this.userList).contains(userToUpdate);
+
+        var userUpdatedOptional = repository.findById(userToUpdate.getId());
+
+        Assertions.assertThat(userUpdatedOptional).isPresent();
+        Assertions.assertThat(userUpdatedOptional.get().getFirstName()).isEqualTo(userToUpdate.getFirstName());
+
+    }
+
+
+
 
 
 

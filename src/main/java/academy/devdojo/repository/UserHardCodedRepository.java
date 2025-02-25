@@ -40,5 +40,10 @@ public class UserHardCodedRepository {
         userData.getUsers().remove(user);
     }
 
+    public void update(User user) {
+        delete(user);
+        save(user);
+    }
+
 
 }
