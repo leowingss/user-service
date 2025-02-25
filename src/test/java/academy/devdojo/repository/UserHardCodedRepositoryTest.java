@@ -84,6 +84,20 @@ class UserHardCodedRepositoryTest {
 
     }
 
+    @Test
+    @DisplayName("delete removes an user")
+    @Order(6)
+    void delete_RemoveUser_WhenSuccesfull() {
+        BDDMockito.when(userData.getUsers()).thenReturn(userList);
+        var userToDelete = userList.getFirst();
+        repository.delete(userToDelete);
+
+        var users = repository.findAll();
+
+        Assertions.assertThat(users).isNotEmpty().doesNotContain(userToDelete);
+
+    }
+
 
 
 }

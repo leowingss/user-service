@@ -36,5 +36,9 @@ public class UserHardCodedRepository {
         return user;
     }
 
+    public void delete(User user) {
+        userData.getUsers().remove(user);
+    }
+
 
 }
