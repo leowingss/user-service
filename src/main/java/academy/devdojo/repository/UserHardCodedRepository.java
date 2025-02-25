@@ -31,5 +31,10 @@ public class UserHardCodedRepository {
                 .toList();
     }
 
+    public User save(User user) {
+        userData.getUsers().add(user);
+        return user;
+    }
+
 
 }
