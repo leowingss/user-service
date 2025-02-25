@@ -2,6 +2,7 @@ package academy.devdojo.controller;
 
 import academy.devdojo.mapper.UserMapper;
 import academy.devdojo.request.UserPostRequest;
+import academy.devdojo.request.UserPutRequest;
 import academy.devdojo.response.UserGetResponse;
 import academy.devdojo.response.UserPostResponse;
 import academy.devdojo.service.UserService;
@@ -64,6 +65,16 @@ public class UserController {
     public ResponseEntity<Void> deleteById(@PathVariable Long id) {
 
         service.delete(id);
+        return ResponseEntity.noContent().build();
+
+    }
+
+    @PutMapping()
+    public ResponseEntity<Void> update(@RequestBody UserPutRequest request) {
+
+        var userToUpdate = mapper.toUser(request);
+        service.update(userToUpdate);
+
         return ResponseEntity.noContent().build();
 
     }

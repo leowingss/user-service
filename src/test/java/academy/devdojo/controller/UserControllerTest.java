@@ -131,8 +131,42 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("DELETE v1/users/1 removes an user")
+    @DisplayName("PUT v1/users update updates a user")
     @Order(7)
+    void update_UpdatesUser_WhenSuccessfull() throws Exception {
+        BDDMockito.when(userData.getUsers()).thenReturn(usersList);
+        var request = fileUtils.readResourceFile("user/put-request-user-200.json");
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .put(URL)
+                        .content(request)
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
+
+    }
+
+    @Test
+    @DisplayName("PUT v1/users throws ResponseStatusException when user is notFound")
+    @Order(8)
+    void update_ThrowsResponseStatusException_WhenUserIsNotFound() throws Exception {
+        BDDMockito.when(userData.getUsers()).thenReturn(usersList);
+        var request = fileUtils.readResourceFile("user/put-request-user-404.json");
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .put(URL)
+                        .content(request)
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+
+    }
+
+    @Test
+    @DisplayName("DELETE v1/users/1 removes an user")
+    @Order(9)
     void delete_RemoveUser_WhenSuccesfull() throws Exception {
         BDDMockito.when(userData.getUsers()).thenReturn(usersList);
 
@@ -147,7 +181,7 @@ class UserControllerTest {
 
     @Test
     @DisplayName("DELETE v1/users/99 throws ResponseStatusException when user is notFound")
-    @Order(8)
+    @Order(10)
     void delete_ThrowsReponseStatusException_WhenUserIsNotFound() throws Exception {
         BDDMockito.when(userData.getUsers()).thenReturn(usersList);
 
@@ -160,6 +194,9 @@ class UserControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
 
     }
+
+
+
 
 
 }
