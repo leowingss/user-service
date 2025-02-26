@@ -1,6 +1,7 @@
 package academy.devdojo.service;
 
 import academy.devdojo.domain.User;
+import academy.devdojo.exception.NotFoundException;
 import academy.devdojo.repository.UserHardCodedRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,7 +22,7 @@ public class UserService {
 
     public User findByIdOrThrowNotFound(Long id) {
         return repository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
     }
 
     public User save(User user) {
