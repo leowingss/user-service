@@ -3,7 +3,6 @@ package academy.devdojo.controller;
 import academy.devdojo.commons.FileUtils;
 import academy.devdojo.commons.UserUtils;
 import academy.devdojo.domain.User;
-import academy.devdojo.repository.UserData;
 import academy.devdojo.repository.UserRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
@@ -37,8 +36,6 @@ class UserControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
-    private UserData userData;
     @MockBean
     private UserRepository repository;
     private List<User> usersList;
@@ -84,7 +81,6 @@ class UserControllerTest {
     @DisplayName("GET v1/users?firstName=x findAll returns empty list when firstname is not found")
     @Order(3)
     void findAll_ReturnsEmptyList_WhenNameIsNotFound() throws Exception {
-        BDDMockito.when(userData.getUsers()).thenReturn(usersList);
         var response = fileUtils.readResourceFile("user/get-user-x-first-name-200.json");
         var firstName = "x";
         mockMvc.perform(MockMvcRequestBuilders.get(URL).param("firstName", firstName))
@@ -114,7 +110,6 @@ class UserControllerTest {
     @DisplayName("GET v1/users/99 throws NotFound 404 when user is notFound")
     @Order(5)
     void findById_ThrowsNotFound_WhenUserIsNotFound() throws Exception {
-        BDDMockito.when(userData.getUsers()).thenReturn(usersList);
         var id = 99L;
         mockMvc.perform(MockMvcRequestBuilders.get(URL + "/{id}", id))
                 .andDo(MockMvcResultHandlers.print())
@@ -168,7 +163,6 @@ class UserControllerTest {
     @DisplayName("PUT v1/users throws NotFound when user is notFound")
     @Order(8)
     void update_ThrowsNotFound_WhenUserIsNotFound() throws Exception {
-        BDDMockito.when(userData.getUsers()).thenReturn(usersList);
         var request = fileUtils.readResourceFile("user/put-request-user-404.json");
 
         mockMvc.perform(MockMvcRequestBuilders
@@ -201,7 +195,6 @@ class UserControllerTest {
     @DisplayName("DELETE v1/users/99 throws NotFound when user is notFound")
     @Order(10)
     void delete_ThrowsReponseStatusException_WhenUserIsNotFound() throws Exception {
-        BDDMockito.when(userData.getUsers()).thenReturn(usersList);
 
         var id = 99;
 
