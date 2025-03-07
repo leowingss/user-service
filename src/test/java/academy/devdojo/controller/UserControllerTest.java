@@ -67,7 +67,7 @@ class UserControllerTest {
     @Test
     @DisplayName("GET v1/users/paginated returns a paginated list of users")
     @Order(1)
-    void findAll_ReturnsPaginatedsers_WhenSuccessfull() throws Exception {
+    void findAllPaginated_ReturnsPaginatedsers_WhenSuccessfull() throws Exception {
         var response = fileUtils.readResourceFile("user/get-user-paginated-200.json");
 
         var pageRequest = PageRequest.of(0, usersList.size());
