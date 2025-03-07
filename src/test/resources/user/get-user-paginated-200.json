@@ -1,0 +1,47 @@
+{
+  "content": [
+    {
+      "id": 1,
+      "firstName": "Fulano",
+      "lastName": "Santos",
+      "email": "fulano@email.com"
+    },
+    {
+      "id": 2,
+      "firstName": "Ciclano",
+      "lastName": "Silva",
+      "email": "ciclano@email.com"
+    },
+    {
+      "id": 3,
+      "firstName": "Beltrano",
+      "lastName": "Almeida",
+      "email": "beltrano@email.com"
+    }
+  ],
+  "pageable": {
+    "pageNumber": 0,
+    "pageSize": 3,
+    "sort": {
+      "empty": true,
+      "unsorted": true,
+      "sorted": false
+    },
+    "offset": 0,
+    "unpaged": false,
+    "paged": true
+  },
+  "last": true,
+  "totalPages": 1,
+  "totalElements": 3,
+  "size": 3,
+  "number": 0,
+  "sort": {
+    "empty": true,
+    "unsorted": true,
+    "sorted": false
+  },
+  "numberOfElements": 3,
+  "first": true,
+  "empty": false
+}

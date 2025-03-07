@@ -15,6 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -53,13 +56,31 @@ class UserControllerTest {
     @DisplayName("GET v1/users returns a list with all users when argument is null")
     @Order(1)
     void findAll_ReturnsAllUsers_WhenArgumentIsNull() throws Exception {
-        BDDMockito.when(repository.findAll()).thenReturn(usersList);
         var response = fileUtils.readResourceFile("user/get-user-null-first-name-200.json");
+        BDDMockito.when(repository.findAll()).thenReturn(usersList);
         mockMvc.perform(MockMvcRequestBuilders.get(URL))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(response));
     }
+
+    @Test
+    @DisplayName("GET v1/users/paginated returns a paginated list of users")
+    @Order(1)
+    void findAll_ReturnsPaginatedsers_WhenSuccessfull() throws Exception {
+        var response = fileUtils.readResourceFile("user/get-user-paginated-200.json");
+
+        var pageRequest = PageRequest.of(0, usersList.size());
+        var pageUser = new PageImpl<>(usersList, pageRequest, 1);
+
+        BDDMockito.when(repository.findAll(BDDMockito.any(Pageable.class))).thenReturn(pageUser);
+
+        mockMvc.perform(MockMvcRequestBuilders.get(URL + "/paginated"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().json(response));
+    }
+
 
     @Test
     @DisplayName("GET v1/users?firstName=Fulano returns list with found object when first name exists")
