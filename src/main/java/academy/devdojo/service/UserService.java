@@ -5,8 +5,11 @@ import academy.devdojo.exception.EmailAlreadyExistsException;
 import academy.devdojo.exception.NotFoundException;
 import academy.devdojo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -21,11 +24,17 @@ public class UserService {
         return firstName == null ? repository.findAll() : repository.findByFirstNameIgnoreCase(firstName);
     }
 
+    public Page<User> findAllPaginated(Pageable pageable) {
+        return repository.findAll(pageable);
+    }
+
+
     public User findByIdOrThrowNotFound(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User not found"));
     }
 
+    //@Transactional(rollbackFor = Exception.class)
     public User save(User user) {
         assertEmailDoesNoExist(user.getEmail());
         return repository.save(user);

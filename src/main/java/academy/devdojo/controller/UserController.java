@@ -1,5 +1,6 @@
 package academy.devdojo.controller;
 
+import academy.devdojo.domain.User;
 import academy.devdojo.mapper.UserMapper;
 import academy.devdojo.request.UserPostRequest;
 import academy.devdojo.request.UserPutRequest;
@@ -9,6 +10,8 @@ import academy.devdojo.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +37,15 @@ public class UserController {
         var userGetResponse = mapper.toUserGetResponseList(users);
 
         return ResponseEntity.ok(userGetResponse);
+
+    }
+
+    @GetMapping("/paginated")
+    public ResponseEntity<Page<UserGetResponse>> findAllPaginated(Pageable pageable) {
+        log.debug("Request received to a list all users paginated");
+
+        var pageUserGetResponse = service.findAllPaginated(pageable).map(mapper::toUserGetResponse);
+        return ResponseEntity.ok(pageUserGetResponse);
 
     }
 
