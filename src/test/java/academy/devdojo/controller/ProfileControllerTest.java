@@ -85,8 +85,8 @@ class ProfileControllerTest {
     @Order(2)
     void findAll_ReturnsEmptyList_WhenNothingIsNotFound() throws Exception {
         var response = fileUtils.readResourceFile("profile/get-profiles-empty-list-200.json");
-        var firstName = "x";
-        mockMvc.perform(MockMvcRequestBuilders.get(URL).param("firstName", firstName))
+
+        mockMvc.perform(MockMvcRequestBuilders.get(URL))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(response));
