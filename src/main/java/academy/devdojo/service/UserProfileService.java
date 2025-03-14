@@ -1,6 +1,7 @@
 package academy.devdojo.service;
 
 import academy.devdojo.domain.Profile;
+import academy.devdojo.domain.User;
 import academy.devdojo.domain.UserProfile;
 import academy.devdojo.repository.ProfileRepository;
 import academy.devdojo.repository.UserProfileRepository;
@@ -22,4 +23,7 @@ public class UserProfileService {
     }
 
 
+    public List<User> findAllUsersByProfileId(Long id) {
+        return repository.findAllUserByProfileId(id);
+    }
 }
