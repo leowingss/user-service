@@ -4,6 +4,7 @@ import academy.devdojo.commons.FileUtils;
 import academy.devdojo.commons.ProfileUtils;
 import academy.devdojo.domain.Profile;
 import academy.devdojo.repository.ProfileRepository;
+import academy.devdojo.repository.UserProfileRepository;
 import academy.devdojo.repository.UserRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
@@ -44,6 +45,8 @@ class ProfileControllerTest {
     private ProfileUtils profileUtils;
     @MockBean
     private UserRepository userRepository;
+    @MockBean
+    private UserProfileRepository userProfileRepository;
 
     @BeforeEach
     void init() {
