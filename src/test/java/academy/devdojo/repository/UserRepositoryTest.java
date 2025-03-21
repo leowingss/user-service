@@ -1,6 +1,7 @@
 package academy.devdojo.repository;
 
 import academy.devdojo.commons.UserUtils;
+import academy.devdojo.config.TestcontainersConfiguration;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
 import org.mockito.BDDMockito;
@@ -15,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 @DataJpaTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Import(UserUtils.class)
+@Import({UserUtils.class, TestcontainersConfiguration.class})
 //@Transactional(propagation = Propagation.NOT_SUPPORTED)
 class UserRepositoryTest {
 
