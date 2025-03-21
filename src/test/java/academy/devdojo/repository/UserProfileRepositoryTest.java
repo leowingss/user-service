@@ -1,6 +1,7 @@
 package academy.devdojo.repository;
 
 import academy.devdojo.commons.UserUtils;
+import academy.devdojo.config.IntegrationTestConfig;
 import academy.devdojo.config.TestcontainersConfiguration;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
@@ -13,8 +14,8 @@ import org.springframework.test.context.jdbc.Sql;
 @DataJpaTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Import({UserUtils.class, TestcontainersConfiguration.class})
-class UserProfileRepositoryTest {
+@Import(UserUtils.class)
+class UserProfileRepositoryTest extends IntegrationTestConfig {
 
     @Autowired
     private UserProfileRepository repository;
