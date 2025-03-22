@@ -19,14 +19,12 @@ import org.springframework.context.annotation.Import;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Stream;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@Transactional
 @Import(TestcontainersConfiguration.class)
 public class ProfileControllerIT extends IntegrationTestConfig {
 
@@ -44,7 +42,8 @@ public class ProfileControllerIT extends IntegrationTestConfig {
     @Test
     @DisplayName("GET v1/profiles returns a list with all profiles")
     @Order(1)
-    @Sql("/sql/init_two_profile.sql")
+    @Sql(value = "/sql/init_two_profile.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = "/sql/clean_profiles.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void findAll_ReturnsAllProfiles_WhenArgumentIsNull() {
         var typeReference = new ParameterizedTypeReference<List<ProfileGetResponse>>() {
         };
@@ -53,7 +52,7 @@ public class ProfileControllerIT extends IntegrationTestConfig {
 
         Assertions.assertThat(responseEntity).isNotNull();
         Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-        Assertions.assertThat(responseEntity.getBody()).isNotNull().doesNotContainNull();
+        Assertions.assertThat(responseEntity.getBody()).isNotEmpty().doesNotContainNull();
 
         responseEntity
                 .getBody()
