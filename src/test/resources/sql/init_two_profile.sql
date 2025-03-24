@@ -1,2 +1,2 @@
-insert into profile (id,description,name) values (1, 'Manages everything','Admin');
-insert into profile (id,description,name) values (2, 'Regular Viewer','Viewer');
+insert into profile (id,description,name) values (1, 'Admins everything','Administrator');
+insert into profile (id,description,name) values (2, 'Manages users','Manager');
