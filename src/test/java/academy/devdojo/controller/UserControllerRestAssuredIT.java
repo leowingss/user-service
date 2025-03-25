@@ -8,15 +8,21 @@ import academy.devdojo.repository.UserRepository;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import net.javacrumbs.jsonunit.assertj.JsonAssertions;
+import net.javacrumbs.jsonunit.core.Option;
 import org.assertj.core.api.Assertions;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.jdbc.Sql;
+
+import java.util.stream.Stream;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -280,30 +286,32 @@ public class UserControllerRestAssuredIT extends IntegrationTestConfig {
 
     }
 
-//    @ParameterizedTest
-//    @MethodSource("postUserBadRequestSource")
-//    @DisplayName("POST v1/users returns bad request when field are invalid")
-//    @Order(11)
-//    void save_ReturnsBadRequest_WhenFieldsAreInvalid(String fileName, List<String> errors) throws Exception {
-//        var request = fileUtils.readResourceFile("user/%s".formatted(fileName));
-//
-//        var mvcResult = mockMvc.perform(MockMvcRequestBuilders
-//                        .post(URL)
-//                        .content(request)
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                )
-//                .andDo(MockMvcResultHandlers.print())
-//                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-//                .andReturn();
-//
-//        var resolvedException = mvcResult.getResolvedException();
-//        org.assertj.core.api.Assertions.assertThat(resolvedException).isNotNull();
-//
-//        org.assertj.core.api.Assertions.assertThat(resolvedException.getMessage())
-//                .contains(errors);
-//
-//    }
-//
+    @ParameterizedTest
+    @MethodSource("postUserBadRequestSource")
+    @DisplayName("POST v1/users returns bad request when field are invalid")
+    @Order(11)
+    void save_ReturnsBadRequest_WhenFieldsAreInvalid(String requestFile, String responseFile) throws Exception {
+        var request = fileUtils.readResourceFile("user/%s".formatted(requestFile));
+        var expectedResponse = fileUtils.readResourceFile("user/%s".formatted(responseFile));
+
+        var response = RestAssured.given()
+                .contentType(ContentType.JSON).accept(ContentType.JSON)
+                .body(request)
+                .when()
+                .post(URL)
+                .then()
+                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .log().all()
+                .extract().response().body().asString();
+
+        JsonAssertions.assertThatJson(response)
+                .whenIgnoringPaths("timestamp")
+                .when(Option.IGNORING_ARRAY_ORDER)
+                .isEqualTo(expectedResponse);
+
+    }
+
+    //
 //    @ParameterizedTest
 //    @MethodSource("putUserBadRequestSource")
 //    @DisplayName("PUT v1/users returns bad request when field are invalid")
@@ -329,18 +337,14 @@ public class UserControllerRestAssuredIT extends IntegrationTestConfig {
 //    }
 //
 //
-//    private static Stream<Arguments> postUserBadRequestSource() {
-//
-//
-//        var allRequiredErrors = allRequiredErrors();
-//        var emailInvalidError = invalidEmailErrors();
-//
-//        return Stream.of(
-//                Arguments.of("post-request-user-empty-fields-400.json", allRequiredErrors),
-//                Arguments.of("post-request-user-blank-fields-400.json", allRequiredErrors),
-//                Arguments.of("post-request-user-invalid-email-400.json", emailInvalidError)
-//        );
-//    }
+    private static Stream<Arguments> postUserBadRequestSource() {
+
+        return Stream.of(
+                Arguments.of("post-request-user-empty-fields-400.json", "post-response-user-empty-fields-400.json"),
+                Arguments.of("post-request-user-blank-fields-400.json", "post-response-user-blank-fields-400.json"),
+                Arguments.of("post-request-user-invalid-email-400.json", "post-response-user-invalid-email-400.json")
+        );
+    }
 //
 //
 //    private static Stream<Arguments> putUserBadRequestSource() {
