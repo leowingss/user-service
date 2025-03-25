@@ -2,7 +2,6 @@ package academy.devdojo.repository;
 
 import academy.devdojo.commons.UserUtils;
 import academy.devdojo.config.IntegrationTestConfig;
-import academy.devdojo.config.TestcontainersConfiguration;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +23,7 @@ class UserProfileRepositoryTest extends IntegrationTestConfig {
     @Test
     @DisplayName("findfindAllUserByProfileId returns a list with all users by profile id ")
     @Order(1)
-    @Sql("/sql/init_user_profile_2_users_1_profile.sql")
+    @Sql("/sql/user_profile/init_user_profile_2_users_1_profile.sql")
     void findAllUserByProfileId_ReturnsAllUsersByProfileId_WhenSuccessfull() {
         var profileId = 1L;
         var users = repository.findAllUserByProfileId(profileId);
