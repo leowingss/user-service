@@ -311,32 +311,33 @@ public class UserControllerRestAssuredIT extends IntegrationTestConfig {
 
     }
 
-    //
-//    @ParameterizedTest
-//    @MethodSource("putUserBadRequestSource")
-//    @DisplayName("PUT v1/users returns bad request when field are invalid")
-//    @Order(12)
-//    void update_ReturnsBadRequest_WhenFieldsAreInvalid(String fileName, List<String> errors) throws Exception {
-//        var request = fileUtils.readResourceFile("user/%s".formatted(fileName));
-//
-//        var mvcResult = mockMvc.perform(MockMvcRequestBuilders
-//                        .put(URL)
-//                        .content(request)
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                )
-//                .andDo(MockMvcResultHandlers.print())
-//                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-//                .andReturn();
-//
-//        var resolvedException = mvcResult.getResolvedException();
-//        org.assertj.core.api.Assertions.assertThat(resolvedException).isNotNull();
-//
-//        Assertions.assertThat(resolvedException.getMessage())
-//                .contains(errors);
-//
-//    }
-//
-//
+
+    @ParameterizedTest
+    @MethodSource("putUserBadRequestSource")
+    @DisplayName("PUT v1/users returns bad request when field are invalid")
+    @Order(12)
+    void update_ReturnsBadRequest_WhenFieldsAreInvalid(String requestFile, String responseFile) throws Exception {
+        var request = fileUtils.readResourceFile("user/%s".formatted(requestFile));
+        var expectedResponse = fileUtils.readResourceFile("user/%s".formatted(responseFile));
+
+        var response = RestAssured.given()
+                .contentType(ContentType.JSON).accept(ContentType.JSON)
+                .body(request)
+                .when()
+                .put(URL)
+                .then()
+                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .log().all()
+                .extract().response().body().asString();
+
+        JsonAssertions.assertThatJson(response)
+                .whenIgnoringPaths("timestamp")
+                .when(Option.IGNORING_ARRAY_ORDER)
+                .isEqualTo(expectedResponse);
+
+    }
+
+
     private static Stream<Arguments> postUserBadRequestSource() {
 
         return Stream.of(
@@ -345,34 +346,15 @@ public class UserControllerRestAssuredIT extends IntegrationTestConfig {
                 Arguments.of("post-request-user-invalid-email-400.json", "post-response-user-invalid-email-400.json")
         );
     }
-//
-//
-//    private static Stream<Arguments> putUserBadRequestSource() {
-//
-//        var allRequiredErrors = allRequiredErrors();
-//        allRequiredErrors.add("The field 'id' cannot be null");
-//        var emailInvalidError = invalidEmailErrors();
-//
-//        return Stream.of(
-//                Arguments.of("put-request-user-empty-fields-400.json", allRequiredErrors),
-//                Arguments.of("put-request-user-blank-fields-400.json", allRequiredErrors),
-//                Arguments.of("put-request-user-invalid-email-400.json", emailInvalidError)
-//        );
-//    }
-//
-//    private static List<String> invalidEmailErrors() {
-//        var emailInvalidError = "Email is not valid";
-//        return List.of(emailInvalidError);
-//    }
-//
-//    private static List<String> allRequiredErrors() {
-//
-//        var firstNameRequiredError = "The field 'firstName' is required";
-//        var lastNameRequiredError = "The field 'lastName' is required";
-//        var emailRequiredError = "The field 'email' is required";
-//
-//        return new ArrayList<>(List.of(firstNameRequiredError, lastNameRequiredError, emailRequiredError));
-//    }
 
+
+    private static Stream<Arguments> putUserBadRequestSource() {
+
+        return Stream.of(
+                Arguments.of("put-request-user-empty-fields-400.json", "put-response-user-empty-fields-400.json"),
+                Arguments.of("put-request-user-blank-fields-400.json", "put-response-user-blank-fields-400.json"),
+                Arguments.of("put-request-user-invalid-email-400.json", "put-response-user-invalid-email-400.json")
+        );
+    }
 
 }
