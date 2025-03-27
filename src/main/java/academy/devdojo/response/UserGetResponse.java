@@ -1,5 +1,8 @@
 package academy.devdojo.response;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,8 +11,12 @@ import lombok.Setter;
 @Getter
 @Builder
 public class UserGetResponse {
+    @Schema(description = "User's id", example = "1")
     private Long id;
+    @Schema(description = "User's first name", example = "Fulano")
     private String firstName;
+    @Schema(description = "User's last name", example = "Santos")
     private String lastName;
+    @Schema(description = "User's email. Must be unique", example = "fulano@gmail.com")
     private String email;
 }
