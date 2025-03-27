@@ -1,12 +1,18 @@
 package academy.devdojo.controller;
 
 import academy.devdojo.domain.User;
+import academy.devdojo.exception.DefaultErrorMessage;
 import academy.devdojo.mapper.UserMapper;
 import academy.devdojo.request.UserPostRequest;
 import academy.devdojo.request.UserPutRequest;
 import academy.devdojo.response.UserGetResponse;
 import academy.devdojo.response.UserPostResponse;
 import academy.devdojo.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +37,17 @@ public class UserController {
     private final UserService service;
     private final UserMapper mapper;
 
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping
+    @Operation(summary = "Get all users", description = "Get all users available in the system",
+            responses = {
+                    @ApiResponse(description = "List all users",
+                            responseCode = "200",
+                            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    array = @ArraySchema(schema = @Schema(implementation = UserGetResponse.class))
+                            )
+                    )
+            }
+    )
     public ResponseEntity<List<UserGetResponse>> findAll(@RequestParam(required = false) String firstName) {
         log.debug("Request received to a list all users, param first name '{}'", firstName);
 
@@ -54,6 +70,22 @@ public class UserController {
 
 
     @GetMapping("{id}")
+    @Operation(summary = "Get user by id",
+            responses = {
+                    @ApiResponse(description = "Get user by its id",
+                            responseCode = "200",
+                            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = UserGetResponse.class)
+                            )
+                    ),
+                    @ApiResponse(description = "User not found",
+                            responseCode = "404",
+                            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = DefaultErrorMessage.class)
+                            )
+                    )
+            }
+    )
     public ResponseEntity<UserGetResponse> findById(@PathVariable Long id) {
 
         var user = service.findByIdOrThrowNotFound(id);
