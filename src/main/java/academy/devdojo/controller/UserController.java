@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
@@ -61,7 +62,7 @@ public class UserController {
     }
 
     @GetMapping("/paginated")
-    public ResponseEntity<Page<UserGetResponse>> findAllPaginated(Pageable pageable) {
+    public ResponseEntity<Page<UserGetResponse>> findAllPaginated(@ParameterObject Pageable pageable) {
         log.debug("Request received to a list all users paginated");
 
         var pageUserGetResponse = service.findAllPaginated(pageable).map(mapper::toUserGetResponse);
