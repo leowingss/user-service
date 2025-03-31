@@ -21,4 +21,6 @@ public class UserPostRequest {
     @Schema(description = "User's email. Must be unique", example = "fulano@gmail.com")
     @Email(regexp = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$", message = "Email is not valid")
     private String email;
+    @NotBlank(message = "The field 'password' is required")
+    private String password;
 }
