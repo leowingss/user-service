@@ -25,6 +25,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,6 +35,7 @@ import java.util.List;
 @RequestMapping("v1/users")
 @Slf4j
 @RequiredArgsConstructor
+@EnableMethodSecurity
 @Tag(name = "User API", description = "User related endpoints")
 public class UserController {
 
@@ -50,6 +53,7 @@ public class UserController {
                     )
             }
     )
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UserGetResponse>> findAll(@RequestParam(required = false) String firstName) {
         log.debug("Request received to a list all users, param first name '{}'", firstName);
 
