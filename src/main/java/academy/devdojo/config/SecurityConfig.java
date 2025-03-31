@@ -19,21 +19,21 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
     private static final String[] WHITE_LIST = {"/swagger-ui.html", "/v3/api-docs/**", "/swagger-ui/**", "/csrf"};
 
-    @Bean
-    public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
-        var user = User.withUsername("leonardo")
-                .password(passwordEncoder.encode("teste"))
-                .roles("USER")
-                .build();
-
-        var admin = User.withUsername("admin")
-                .password(passwordEncoder.encode("devdojo"))
-                .roles("ADMIN")
-                .build();
-
-        return new InMemoryUserDetailsManager(user, admin);
-
-    }
+//    @Bean
+//    public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
+//        var user = User.withUsername("leonardo")
+//                .password(passwordEncoder.encode("teste"))
+//                .roles("USER")
+//                .build();
+//
+//        var admin = User.withUsername("admin")
+//                .password(passwordEncoder.encode("devdojo"))
+//                .roles("ADMIN")
+//                .build();
+//
+//        return new InMemoryUserDetailsManager(user, admin);
+//
+//    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
