@@ -55,7 +55,7 @@ public class UserController {
                     )
             }
     )
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<List<UserGetResponse>> findAll(@RequestParam(required = false) String firstName) {
         log.debug("Request received to a list all users, param first name '{}'", firstName);
 
