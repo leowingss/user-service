@@ -3,6 +3,7 @@ package academy.devdojo.service;
 import academy.devdojo.commons.UserUtils;
 import academy.devdojo.domain.User;
 import academy.devdojo.exception.EmailAlreadyExistsException;
+import academy.devdojo.mapper.UserMapper;
 import academy.devdojo.repository.UserRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
@@ -21,6 +22,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.any;
+
 @ExtendWith(MockitoExtension.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class UserServiceTest {
@@ -33,6 +36,8 @@ class UserServiceTest {
 
     @InjectMocks
     private UserUtils userUtils;
+    @Mock
+    private UserMapper mapper;
 
     @BeforeEach
     void init() {
@@ -54,7 +59,7 @@ class UserServiceTest {
     void findAllPaginated_ReturnsPaginatedUsers_WhenSuccessfull() {
         var pageRequest = PageRequest.of(0, usersList.size());
         var pageUser = new PageImpl<>(usersList, pageRequest, 1);
-        BDDMockito.when(repository.findAll(BDDMockito.any(Pageable.class))).thenReturn(pageUser);
+        BDDMockito.when(repository.findAll(any(Pageable.class))).thenReturn(pageUser);
         var userFound = service.findAllPaginated(pageRequest);
         Assertions.assertThat(userFound).isNotNull().hasSameElementsAs(usersList);
     }
@@ -159,6 +164,7 @@ class UserServiceTest {
         BDDMockito.when(repository.findById(userToUpdate.getId())).thenReturn(Optional.of(userToUpdate));
         BDDMockito.when(repository.findByEmailAndIdNot(email, id)).thenReturn(Optional.empty());
         BDDMockito.when(repository.save(userToUpdate)).thenReturn(userToUpdate);
+        BDDMockito.when(mapper.toUserWithPasswordAndRoles(any(), any(), any())).thenReturn(userToUpdate);
 
         service.update(userToUpdate);
 
