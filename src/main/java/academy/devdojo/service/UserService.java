@@ -3,6 +3,7 @@ package academy.devdojo.service;
 import academy.devdojo.domain.User;
 import academy.devdojo.exception.EmailAlreadyExistsException;
 import academy.devdojo.exception.NotFoundException;
+import academy.devdojo.mapper.UserMapper;
 import academy.devdojo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,6 +20,7 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository repository;
+    private final UserMapper mapper;
 
     public List<User> findAll(String firstName) {
         return firstName == null ? repository.findAll() : repository.findByFirstNameIgnoreCase(firstName);
@@ -46,9 +48,16 @@ public class UserService {
     }
 
     public void update(User userToUpdate) {
-        assertUserExists(userToUpdate.getId());
         assertEmailDoesNoExist(userToUpdate.getEmail(), userToUpdate.getId());
-        repository.save(userToUpdate);
+        User savedUser = findByIdOrThrowNotFound(userToUpdate.getId());
+        String password = userToUpdate.getPassword() == null ? savedUser.getPassword() : userToUpdate.getPassword();
+        User userWithPasswordAndRoles = mapper.toUserWithPasswordAndRoles(userToUpdate, password, savedUser);
+        //    userToUpdate.setRoles(savedUser.getRoles());
+
+        //        if (userToUpdate.getPassword() == null) {
+//            userToUpdate.setPassword(savedUser.getPassword());
+//        }
+        repository.save(userWithPasswordAndRoles);
     }
 
     public void assertUserExists(Long id) {

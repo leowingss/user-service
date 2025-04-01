@@ -6,9 +6,8 @@ import academy.devdojo.request.UserPostRequest;
 import academy.devdojo.request.UserPutRequest;
 import academy.devdojo.response.UserGetResponse;
 import academy.devdojo.response.UserPostResponse;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingConstants;
+import org.aspectj.lang.annotation.After;
+import org.mapstruct.*;
 
 import java.util.List;
 
@@ -20,6 +19,7 @@ public interface UserMapper {
     @Mapping(target = "password", qualifiedBy = EncondedMapping.class)
     User toUser(UserPostRequest postRequest);
 
+    @Mapping(target = "password", qualifiedBy = EncondedMapping.class)
     User toUser(UserPutRequest request);
 
     UserPostResponse toUserPostResponse(User user);
@@ -27,5 +27,20 @@ public interface UserMapper {
     UserGetResponse toUserGetResponse(User user);
 
     List<UserGetResponse> toUserGetResponseList(List<User> user);
+
+    @Mapping(target = "password", source = "rawPassword", qualifiedBy = EncondedMapping.class)
+    @Mapping(target = "roles", source = "savedUser.roles")
+    @Mapping(target = "id", source = "userToUpdate.roles")
+    @Mapping(target = "firstName", source = "userToUpdate.firstName")
+    @Mapping(target = "lastName", source = "userToUpdate.lastName")
+    @Mapping(target = "email", source = "userToUpdate.email")
+    User toUserWithPasswordAndRoles(User userToUpdate, String rawPassword, User savedUser);
+
+    @AfterMapping
+    default void setPasswordIfNull(@MappingTarget User user, String rawPassword, User savedUser) {
+        if (rawPassword == null) {
+            user.setPassword(savedUser.getPassword());
+        }
+    }
 
 }
