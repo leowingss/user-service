@@ -48,15 +48,10 @@ public class UserService {
     }
 
     public void update(User userToUpdate) {
+        var savedUser = findByIdOrThrowNotFound(userToUpdate.getId());
         assertEmailDoesNoExist(userToUpdate.getEmail(), userToUpdate.getId());
-        User savedUser = findByIdOrThrowNotFound(userToUpdate.getId());
-        String password = userToUpdate.getPassword() == null ? savedUser.getPassword() : userToUpdate.getPassword();
-        User userWithPasswordAndRoles = mapper.toUserWithPasswordAndRoles(userToUpdate, password, savedUser);
-        //    userToUpdate.setRoles(savedUser.getRoles());
 
-        //        if (userToUpdate.getPassword() == null) {
-//            userToUpdate.setPassword(savedUser.getPassword());
-//        }
+        var userWithPasswordAndRoles = mapper.toUserWithPasswordAndRoles(userToUpdate, userToUpdate.getPassword(), savedUser);
         repository.save(userWithPasswordAndRoles);
     }
 
