@@ -18,6 +18,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
@@ -30,6 +31,7 @@ import java.util.stream.Stream;
 @WebMvcTest(controllers = ProfileController.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ComponentScan(basePackages = "academy.devdojo")
+@WithMockUser
 class ProfileControllerTest {
 
     private static final String URL = "/v1/profiles";
