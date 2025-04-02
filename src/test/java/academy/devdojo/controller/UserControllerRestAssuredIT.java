@@ -3,10 +3,12 @@ package academy.devdojo.controller;
 import academy.devdojo.commons.FileUtils;
 import academy.devdojo.commons.UserUtils;
 import academy.devdojo.config.IntegrationTestConfig;
+import academy.devdojo.config.RestAssuredConfig;
 import academy.devdojo.config.TestcontainersConfiguration;
 import academy.devdojo.repository.UserRepository;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import io.restassured.specification.RequestSpecification;
 import net.javacrumbs.jsonunit.assertj.JsonAssertions;
 import net.javacrumbs.jsonunit.core.Option;
 import org.assertj.core.api.Assertions;
@@ -16,6 +18,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Import;
@@ -24,7 +27,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 import java.util.stream.Stream;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = RestAssuredConfig.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Import(TestcontainersConfiguration.class)
 public class UserControllerRestAssuredIT extends IntegrationTestConfig {
@@ -36,16 +39,20 @@ public class UserControllerRestAssuredIT extends IntegrationTestConfig {
 
     @Autowired
     private FileUtils fileUtils;
-    @LocalServerPort
-    private int port;
 
     @Autowired
     private UserRepository repository;
 
+    @Autowired
+    @Qualifier(value = "requestSpecificationRegularUser")
+    private RequestSpecification requestSpecificationRegularUser;
+    @Autowired
+    @Qualifier(value = "requestSpecificationAdminUser")
+    private RequestSpecification requestSpecificationAdminUser;
+
     @BeforeEach
     void setUrl() {
-        RestAssured.baseURI = "http://localhost";
-        RestAssured.port = port;
+        RestAssured.requestSpecification = requestSpecificationRegularUser;
     }
 
     @Test
@@ -54,6 +61,8 @@ public class UserControllerRestAssuredIT extends IntegrationTestConfig {
     @Sql(value = "/sql/user/init_three_user.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(value = "/sql/user/clean_users.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void findAll_ReturnsAllUsers_WhenArgumentIsNull() {
+        RestAssured.requestSpecification = requestSpecificationAdminUser;
+
         var expectedResponse = fileUtils.readResourceFile("user/get-user-null-first-name-200.json");
 
         var response = RestAssured.given()
@@ -85,6 +94,8 @@ public class UserControllerRestAssuredIT extends IntegrationTestConfig {
     @Sql(value = "/sql/user/clean_users.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     @Order(2)
     void findAll_ReturnsFoundUser_WhenFirstNameIsFound() throws Exception {
+        RestAssured.requestSpecification = requestSpecificationAdminUser;
+
         var expectedResponse = fileUtils.readResourceFile("user/get-user-fulano-first-name-200.json");
 
         var response = RestAssured.given()
@@ -109,6 +120,9 @@ public class UserControllerRestAssuredIT extends IntegrationTestConfig {
     @Sql(value = "/sql/user/clean_users.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     @Order(3)
     void findAll_ReturnsEmptyList_WhenNameIsNotFound() throws Exception {
+        RestAssured.requestSpecification = requestSpecificationAdminUser;
+
+
         var expectedResponse = fileUtils.readResourceFile("user/get-user-x-first-name-200.json");
         var firstName = "x";
 
@@ -159,6 +173,8 @@ public class UserControllerRestAssuredIT extends IntegrationTestConfig {
 
     @Test
     @DisplayName("GET v1/users/99 throws NotFound 404 when user is notFound")
+    @Sql(value = "/sql/user/init_three_user.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = "/sql/user/clean_users.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     @Order(5)
     void findById_ThrowsNotFound_WhenUserIsNotFound() throws Exception {
         var expectedResponse = fileUtils.readResourceFile("user/get-user-by-id-404.json");
