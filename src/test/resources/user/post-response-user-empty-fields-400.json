@@ -1,7 +1,7 @@
 {
-  "timestamp": "2025-03-27T19:50:00.0054179-03:00",
+  "timestamp": "2025-04-02T22:07:08.5076486-03:00",
   "status": 400,
   "error": "Bad Request",
-  "message": "Email is not valid, The field 'email' is required, The field 'firstName' is required, The field 'lastName' is required",
+  "message": "Email is not valid, The field 'email' is required, The field 'firstName' is required, The field 'lastName' is required, The field 'password' is required",
   "path": "/v1/users"
 }

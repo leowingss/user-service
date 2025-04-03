@@ -19,7 +19,6 @@ public interface UserMapper {
     @Mapping(target = "password", qualifiedBy = EncondedMapping.class)
     User toUser(UserPostRequest postRequest);
 
-    @Mapping(target = "password", qualifiedBy = EncondedMapping.class)
     User toUser(UserPutRequest request);
 
     UserPostResponse toUserPostResponse(User user);
