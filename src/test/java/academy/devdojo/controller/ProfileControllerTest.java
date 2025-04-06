@@ -19,6 +19,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
@@ -38,16 +39,17 @@ class ProfileControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @MockitoBean
     private ProfileRepository repository;
     private List<Profile> profilesList;
     @Autowired
     private FileUtils fileUtils;
     @Autowired
     private ProfileUtils profileUtils;
-    @MockBean
+    @MockitoBean
     private UserRepository userRepository;
-    @MockBean
+    @MockitoBean
+
     private UserProfileRepository userProfileRepository;
 
     @BeforeEach

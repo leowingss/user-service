@@ -23,6 +23,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
@@ -44,16 +45,18 @@ class UserControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @MockitoBean
     private UserRepository repository;
     private List<User> usersList;
     @Autowired
     private FileUtils fileUtils;
     @Autowired
     private UserUtils userUtils;
-    @MockBean
+    @MockitoBean
+
     private ProfileService profileService;
-    @MockBean
+    @MockitoBean
+
     private UserProfileRepository userProfileRepository;
 
     @BeforeEach
