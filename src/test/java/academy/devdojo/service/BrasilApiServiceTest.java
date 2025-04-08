@@ -3,6 +3,7 @@ package academy.devdojo.service;
 import academy.devdojo.commons.CepUtils;
 import academy.devdojo.config.BrasilApiConfigurationProperties;
 import academy.devdojo.config.RestClientConfiguration;
+import academy.devdojo.exception.NotFoundException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.*;
@@ -63,5 +64,27 @@ class BrasilApiServiceTest {
                 .isNotNull()
                 .isEqualTo(cepGetResponse);
 
+    }
+
+    @Order(2)
+    @Test
+    @DisplayName("findCep returns CepErrorRespose when unsuccessful")
+    void findCep_ReturnsCepErrorResponse_WhenUnsuccessfull() throws JsonProcessingException {
+        server = MockRestServiceServer.bindTo(brasilApiClientBuilder).build();
+        var cep = "40400000";
+        var cepErrorResponse = cepUtils.newCepErrorResponse();
+        var jsonResponse = mapper.writeValueAsString(cepErrorResponse);
+        var expectedErrorMessage = """
+                404 NOT_FOUND "CepErrorResponse[name=CepPromiseError, message=Todos os serviços de CEP retornaram erro, type=service_error, errors=[CepInnerErrorResponse[name=ServiceError, message=CEP INVÁLIDO, service=correios]]]"           
+                """.trim();
+        var requesTo = MockRestRequestMatchers.requestToUriTemplate(properties.baseUrl() + properties.cepUri(), cep);
+        var withSucess = MockRestResponseCreators.withResourceNotFound().body(jsonResponse);
+
+        server.expect(requesTo).andRespond(withSucess);
+
+        assertThatException()
+                .isThrownBy(() -> service.findCep(cep))
+                .withMessage(expectedErrorMessage)
+                .isInstanceOf(NotFoundException.class);
     }
 }
