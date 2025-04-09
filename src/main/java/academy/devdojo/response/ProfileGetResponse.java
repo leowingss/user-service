@@ -8,7 +8,8 @@ import lombok.Setter;
 @Getter
 @Builder
 public class ProfileGetResponse {
-    private Long id;
-    private String name;
-    private String description;
+
+  private Long id;
+  private String name;
+  private String description;
 }

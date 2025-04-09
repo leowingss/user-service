@@ -24,55 +24,56 @@ import org.springframework.test.context.jdbc.Sql;
 @AutoConfigureWireMock(port = 0, files = "classpath:/wiremock/brasil-api/cep", stubs = "classpath:/wiremock/brasil-api/cep/mappings")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class BrasilApiControllerIT extends IntegrationTestConfig {
-    private static final String URL = "v1/brasil-api/cep";
-    @Autowired
-    private FileUtils fileUtils;
 
-    @Autowired
-    @Qualifier(value = "requestSpecificationRegularUser")
-    private RequestSpecification requestSpecificationRegularUser;
+  private static final String URL = "v1/brasil-api/cep";
+  @Autowired
+  private FileUtils fileUtils;
 
-    @BeforeEach
-    void setUrl() {
-        RestAssured.requestSpecification = requestSpecificationRegularUser;
-    }
+  @Autowired
+  @Qualifier(value = "requestSpecificationRegularUser")
+  private RequestSpecification requestSpecificationRegularUser;
 
-    @Order(1)
-    @Test
-    @DisplayName("findCep returns CepGetResponse when successful")
-    void findCep_ReturnsCepGetResponse_WhenSuccessful() {
-        var cep = "00000000";
-        var expectedResponse = fileUtils.readResourceFile("brasil-api/cep/expected-get-cep-response-200.json");
+  @BeforeEach
+  void setUrl() {
+    RestAssured.requestSpecification = requestSpecificationRegularUser;
+  }
 
-        var response = RestAssured.given()
-                .contentType(ContentType.JSON)
-                .accept(ContentType.JSON)
-                .when()
-                .get(URL + "/{cep}", cep)
-                .then()
-                .statusCode(HttpStatus.OK.value())
-                .log().all()
-                .extract().body().asString();
+  @Order(1)
+  @Test
+  @DisplayName("findCep returns CepGetResponse when successful")
+  void findCep_ReturnsCepGetResponse_WhenSuccessful() {
+    var cep = "00000000";
+    var expectedResponse = fileUtils.readResourceFile("brasil-api/cep/expected-get-cep-response-200.json");
 
-        JsonAssertions.assertThatJson(response)
-                .whenIgnoringPaths("state")
-                .isEqualTo(expectedResponse);
-    }
+    var response = RestAssured.given()
+        .contentType(ContentType.JSON)
+        .accept(ContentType.JSON)
+        .when()
+        .get(URL + "/{cep}", cep)
+        .then()
+        .statusCode(HttpStatus.OK.value())
+        .log().all()
+        .extract().body().asString();
 
-    @Order(2)
-    @Test
-    @DisplayName("findCep returns CepErrorResponse when unsuccessful")
-    void findCep_ReturnsCepErrorResponse_WhenUnsuccessful() {
-        var cep = "40400000";
-        var expectedResponse = fileUtils.readResourceFile("brasil-api/cep/expected-get-cep-response-404.json");
+    JsonAssertions.assertThatJson(response)
+        .whenIgnoringPaths("state")
+        .isEqualTo(expectedResponse);
+  }
 
-        RestAssured.given()
-                .contentType(ContentType.JSON).accept(ContentType.JSON)
-                .when()
-                .get(URL + "/{cep}", cep)
-                .then()
-                .statusCode(HttpStatus.NOT_FOUND.value())
-                .body(Matchers.equalTo(expectedResponse))
-                .log().all();
-    }
+  @Order(2)
+  @Test
+  @DisplayName("findCep returns CepErrorResponse when unsuccessful")
+  void findCep_ReturnsCepErrorResponse_WhenUnsuccessful() {
+    var cep = "40400000";
+    var expectedResponse = fileUtils.readResourceFile("brasil-api/cep/expected-get-cep-response-404.json");
+
+    RestAssured.given()
+        .contentType(ContentType.JSON).accept(ContentType.JSON)
+        .when()
+        .get(URL + "/{cep}", cep)
+        .then()
+        .statusCode(HttpStatus.NOT_FOUND.value())
+        .body(Matchers.equalTo(expectedResponse))
+        .log().all();
+  }
 }

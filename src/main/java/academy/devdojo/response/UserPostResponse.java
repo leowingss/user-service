@@ -9,6 +9,7 @@ import lombok.Setter;
 @Getter
 @Builder
 public class UserPostResponse {
-    @Schema(description = "User's id", example = "1")
-    private Long id;
+
+  @Schema(description = "User's id", example = "1")
+  private Long id;
 }

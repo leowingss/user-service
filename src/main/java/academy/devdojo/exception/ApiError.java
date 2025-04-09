@@ -9,9 +9,10 @@ import lombok.Setter;
 @Getter
 @Builder
 public class ApiError {
-    private String timestamp;
-    private int status;
-    private String error;
-    private String message;
-    private String path;
+
+  private String timestamp;
+  private int status;
+  private String error;
+  private String message;
+  private String path;
 }
