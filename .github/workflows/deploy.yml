@@ -15,3 +15,6 @@ jobs:
       - name: Print Branch
         run: echo "Deploying branch ${{ github.event.inputs.branch }}"
 
+      - name: Print secret
+        run: echo "Secret is ${{ secrets.TOKEN_TEST }}"
+
