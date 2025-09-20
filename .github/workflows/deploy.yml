@@ -1,0 +1,17 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to deploy'
+        required: true
+        default: 'main'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print Branch
+        run: echo "Deploying branch ${{ github.event.inputs.branch }}"
+
